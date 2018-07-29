@@ -1,55 +1,47 @@
 ## Behavioral Cloning Project
 
-The goals / steps of this project are the following:
-* Use the simulator to collect data of good driving behavior
-* Build a convolution neural network in Keras that predicts steering angles from images
+The project's goals are:
+* Use the udacity's simulator to collect data of my driving behavior
+* Code a CNN in Keras that predicts steering angles from images
 * Train and validate the model with a training and validation set
 * Test that the model successfully drives around track one without leaving the road
-* Summarize the results with a written report
+* White this 'written report'
 
-The Keras implementation of my model can be found in model.py.  
+The CNN implementation can be found on model.py.  
 
-model.h5 is a saved Keras model containing a version of my trained network
-that reliably steers the car all the way around the track in my tests.
+model.h5 is a saved Keras file containing a version of my trained network
 
-video.mp4 shows model.h5 in action.
+video.mp4 shows the a test using the model.h5 in action.
 
 Rubric points are addressed individually below.
 
-[//]: # (Image References)
-
-[recordingerror]: ./writeup_images/recording_fails.png "Problem recording to directory"
+[//]: # (Image's example used)
 [center]: ./writeup_images/center.png "Image from center camera"
 [left]: ./writeup_images/left.png "Image from left camera"
 [right]: ./writeup_images/right.png "Image from right camera"
 [centerflipped]: ./writeup_images/center_flipped.png "Image from center camera, flipped left<->right"
-[cameraangles]: ./writeup_images/cameraangles.png "Diagram of why a correction must be applied to left and right camera images"
 
 ---
-### Files Submitted & Code Quality
+### Required Files
 
-#### 1. Submission includes all required files and can be used to run the simulator in autonomous mode
+#### 1. This repository have all required files and can be used to run the simulator in autonomous mode
 
-My project includes the following files:
+The project includes:
 * model.py:  Keras implementation of model, as well as code to load data and train the model
 * drive.py: Connects to Udacity simulator (not provided) to feed image data from the simulator to my model, and angle data from my model back to the simulator
 * model.h5:  A saved Keras model, trained using model.py, capable of reliably steering the car all the way around Track 1
 * video.mp4: Video of the car driving around the track, with steering data supplied by model.h5
 * writeup_report.md
 
-#### 2. Submission includes functional code
+#### 2. Quality of Code
 
-If you clone this repository, start the Udacity simulator (not provided),
+If you clone this repository, start the Udacity's simulator on autonomous mode,
 and run
 ```sh
 python drive.py model.h5
 ```
 you should see the car drive around the track autonomously without leaving the road.
 
-
-#### 3. Submission code is usable and readable
-
-Please refer to model.py.
 
 ### Model Architecture and Training Strategy
 
@@ -90,21 +82,17 @@ See "Creation of the Training Set" below.
 #### 1. Solution Design Approach
 
 All training was conducted on my laptop.  I've set up TensorFlow to use my installed GPU
-(an Nvidia Geforce GTX 960M GPU, Maxwell architecture).
+(an Nvidia Geforce GTX 960M GPU, Maxwell architecture) because it was so much files to upload to aws instance or udacity workspace.
+I have an medium post explaining how can i [run it on arch linux](https://medium.com/brasil-ai/instalando-tensorflow-1-6-0-gpu-cuda-9-1-cudnn-7-1-3-no-arch-linux-manjaro-e068b3a8025f) 
 
-I began by training a 1-layer fully connected network, using only data from the center camera,
-just to get the data pipeline working.  
-
-Next I implemented LeNet in Keras, to see how it would perform.  
+I implemented LeNet in Keras, to see how it would perform.  
 I trained LeNet using only data from the center camera. 
-It sometimes got the car around the first corner and onto the bridge.
 
-Next I implemented a cropping layer as the first layer in my network.  This removed the top 50
-and bottom 20 pixels from each input image before passing the image on to the convolution layers.
+Next I implemented a cropping layer as the first layer in my network. 
 The top 50 pixels tended to contain sky/trees/horizon, and the bottom 20 pixels contained the car's
 hood, all of which are irrelevant to steering and might confuse the model.
 
-I then decided to augment the training dataset by additionally using images from the left and right cameras,
+I then i trained the CNN using images from the left and right cameras,
 as well as a left-right flipped version of the center camera's image.
 This entire training+validation dataset was too large to store in my computer's RAM:
 8036 samples x 160x320x3 x 4 bytes per float x 4 images per sample (center,left,right,flipped) = about 20 GB.

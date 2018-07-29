@@ -25,13 +25,16 @@ train_samples, validation_samples = train_test_split( lines, test_size=0.2 )
 
 def generator( samples, batch_size=32 ):
     num_samples = len( samples )
-
+    # While true, that next() can be called on the generator 
+    # indefinitely over arbitrarily many epochs.
     while 1:
         sklearn.utils.shuffle( samples )
-
+        # Loop over batches of lines read in from driving_log.csv
         for offset in range( 0, num_samples, batch_size ):
             batch_samples = samples[offset:offset+batch_size]
-
+            # the code does not have to hold an entire array of images
+            # in memory at once, the images is allocated on demand.
+            # Output batches = 4*batch_size
             images = []
             angles = []
             for batch_sample in batch_samples:
@@ -56,7 +59,11 @@ def generator( samples, batch_size=32 ):
                 images.append( image_left )
                 images.append( image_right )
                 images.append( image_flipped )
-                 
+
+                # Correction angle added (subtracted)
+                # to generate a driving angle for the left (right) 
+                # camera images.  I tried training the network with several
+                # values of this parameter. 
                 correction = 0.065
                 angle_center = float( batch_sample[3] )
                 angle_left = angle_center + correction
@@ -83,6 +90,8 @@ validation_generator = generator( validation_samples, batch_size=32 )
 
 model = Sequential()
 
+# Crop the hood of the car and the higher parts of the images 
+# which contain irrelevant sky/horizon/trees
 model.add( Cropping2D( cropping=( (50,20), (0,0) ), input_shape=(160,320,3)))
 
 model.add( Lambda( lambda x: x/255. - 0.5 ) )
@@ -104,6 +113,12 @@ model.add( Dense( 1 ) )
 
 model.compile( loss='mse', optimizer='adam' )
 
+# Define the number of times the generators of the training and validation steps will
+# be called in each epoch.
+#
+# This should match the number of iterations in the 
+# "for offset in range( 0, num_samples, batch_size ):" 
+# loop of the generator.
 train_steps = np.ceil( len( train_samples )/32 ).astype( np.int32 )
 validation_steps = np.ceil( len( validation_samples )/32 ).astype( np.int32 )
 
