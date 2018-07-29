@@ -16,10 +16,14 @@ video.mp4 shows the a test using the model.h5 in action.
 Rubric points are addressed individually below.
 
 [//]: # (Image's example used)
-[center]: ./writeup_images/center.png "Image from center camera"
-[left]: ./writeup_images/left.png "Image from left camera"
-[right]: ./writeup_images/right.png "Image from right camera"
-[centerflipped]: ./writeup_images/center_flipped.png "Image from center camera, flipped left<->right"
+
+[center](https://github.com/italojs/CarND-Behavioral-Cloning-P3-italo/blob/master/writeup_images/center.png): "Image from center camera"
+
+[left](https://github.com/italojs/CarND-Behavioral-Cloning-P3-italo/blob/master/writeup_images/left.png):  "Image from left camera"
+
+[right](https://github.com/italojs/CarND-Behavioral-Cloning-P3-italo/blob/master/writeup_images/right.png): "Image from right camera"
+
+[centerflipped](https://github.com/italojs/CarND-Behavioral-Cloning-P3-italo/blob/master/writeup_images/center_flipped.png):  "Image from center camera, flipped left<->right"
 
 ---
 ### Required Files
