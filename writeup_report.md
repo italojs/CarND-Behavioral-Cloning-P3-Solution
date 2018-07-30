@@ -158,17 +158,8 @@ For the record, the network also performs just fine without the dropout layer.
 
 #### 3. Creation of the Training Set & Training Process
 
-Unfortunately, I had trouble recording my own training data on my system (Ubuntu 16.04).  When I tried to select an output
-directory from within linux_sim.x86_64, the directory appeared red, and the executable did nothing:
 
-![Recording error][recordingerror]
-
-Choice of directory did not appear to matter.  
-The only thing I could think of was that it was a permissions issue.  I chmod 777ed my output
-directory, and even ran the simulator as root, but the problem persisted.
-
-
-I therefore decided to use the provided training data, which was read in from driving_log.csv.
+I decided to use the provided training data, which was read in from driving_log.csv.
 Each line of driving_log.csv corresponded to one sample.
 Each sample contained a relative path to center, left, and right camera images, as well as the current driving
 angle, throttle, brake, and speed data.
@@ -206,12 +197,7 @@ were at the point on the road occupied by the left or right camera.
 Say at a given point in time the car is driving with a certain steering angle to stay on the road.  If the car suddenly shifted
 so that the center camera was in the spot formerly occupied by the left camera, the driving angle would have to be adjusted 
 clockwise (a correction added) to stay on the road.  If the car shifted so that the center camera was in the spot
-formerly occupied by the right camera, the driving angle would have to be adjusted counterclockwise (a correction subtracted)
-to stay on the road.  Here's a diagram from the Udacity lesson.  You can see that a line from the left camera's position
-to the same destination is further clockwise, while a line from the right camera's position to the same destination is 
-further counterclockwise. 
-
-![angle corrections][cameraangles]
+formerly occupied by the right camera, the driving angle would have to be adjusted counterclockwise (a correction subtracted) to stay on the road.  
 
 Adding the left and right images to the training set paired with corrected angles 
 should help the car recover when the center-camera's image
@@ -223,9 +209,8 @@ The track is counterclockwise, so unaugmented training data contains more left t
 Flipping the center-camera image and pairing it with a corresponding flipped angle adds more right-turn data, 
 which should help the model generalize.
 
-Images were read in from files, and the flipped image added, using a Python generator.  The generator processed lines of the 
-file that stored image locations along with angle data (driving_log.csv) in batches of 32, and supplied 
-data to model.fit_generator() in batches of 128 (each line of driving_log.csv was used to provide 
+Images were read in from files, and the flipped image added, using a Python generator. 
+The generator processed lines of the file that stored image locations along with angle data (driving_log.csv) in batches of 32, and supplied data to model.fit_generator() in batches of 128 (each line of driving_log.csv was used to provide 
 a center-camera, left-camera, right-camera, and center-camera-flipped image). 
 
 The generator also shuffled the array containing the training samples prior to each epoch, so that 
