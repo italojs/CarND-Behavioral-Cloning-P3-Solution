@@ -1,55 +1,51 @@
-Udacity self-driving car nanodegree Project 3 solution: neural network that drives a simulated car around a track autonomously.  The network is implemented in Keras, and trained on recorded behavior of a human driver.
+## Behavioral Cloning Project
 
-### video.mp4 shows the network in action.
-
-The goals / steps of this project are the following:
-* Use the simulator to collect data of good driving behavior
-* Build a convolution neural network in Keras that predicts steering angles from images
+The project's goals are:
+* Use the udacity's simulator to collect data of my driving behavior
+* Code a CNN in Keras that predicts steering angles from images
 * Train and validate the model with a training and validation set
 * Test that the model successfully drives around track one without leaving the road
-* Summarize the results with a written report
+* White this 'written report'
 
-The Keras implementation of my model can be found in model.py.  
+The CNN implementation can be found on model.py.  
 
-model.h5 is a saved Keras model containing a version of my trained network
-that reliably steers the car all the way around the track in my tests.
+model.h5 is a saved Keras file containing a version of my trained network
+
+video.mp4 shows the a test using the model.h5 in action.
 
 Rubric points are addressed individually below.
 
-[//]: # (Image References)
+[//]: # (Image's example used)
 
-[recordingerror]: ./writeup_images/recording_fails.png "Problem recording to directory"
-[center]: ./writeup_images/center.png "Image from center camera"
-[left]: ./writeup_images/left.png "Image from left camera"
-[right]: ./writeup_images/right.png "Image from right camera"
-[centerflipped]: ./writeup_images/center_flipped.png "Image from center camera, flipped left<->right"
-[cameraangles]: ./writeup_images/cameraangles.png "Diagram of why a correction must be applied to left and right camera images"
+[center](https://github.com/italojs/CarND-Behavioral-Cloning-P3-italo/blob/master/writeup_images/center.png): "Image from center camera"
+
+[left](https://github.com/italojs/CarND-Behavioral-Cloning-P3-italo/blob/master/writeup_images/left.png):  "Image from left camera"
+
+[right](https://github.com/italojs/CarND-Behavioral-Cloning-P3-italo/blob/master/writeup_images/right.png): "Image from right camera"
+
+[centerflipped](https://github.com/italojs/CarND-Behavioral-Cloning-P3-italo/blob/master/writeup_images/center_flipped.png):  "Image from center camera, flipped left<->right"
 
 ---
-### Files Submitted & Code Quality
+### Required Files
 
-#### 1. Submission includes all required files and can be used to run the simulator in autonomous mode
+#### 1. This repository have all required files and can be used to run the simulator in autonomous mode
 
-My project includes the following files:
+The project includes:
 * model.py:  Keras implementation of model, as well as code to load data and train the model
 * drive.py: Connects to Udacity simulator (not provided) to feed image data from the simulator to my model, and angle data from my model back to the simulator
 * model.h5:  A saved Keras model, trained using model.py, capable of reliably steering the car all the way around Track 1
 * video.mp4: Video of the car driving around the track, with steering data supplied by model.h5
 * writeup_report.md
 
-#### 2. Submission includes functional code
+#### 2. Quality of Code
 
-If you clone this repository, start the Udacity simulator (not provided),
+If you clone this repository, start the Udacity's simulator on autonomous mode,
 and run
 ```sh
 python drive.py model.h5
 ```
 you should see the car drive around the track autonomously without leaving the road.
 
-
-#### 3. Submission code is usable and readable
-
-Please refer to model.py.
 
 ### Model Architecture and Training Strategy
 
@@ -90,21 +86,17 @@ See "Creation of the Training Set" below.
 #### 1. Solution Design Approach
 
 All training was conducted on my laptop.  I've set up TensorFlow to use my installed GPU
-(an Nvidia Geforce GTX 960M GPU, Maxwell architecture).
+(an Nvidia Geforce GTX 960M GPU, Maxwell architecture) because it was so much files to upload to aws instance or udacity workspace.
+I have an medium post explaining how can i [run it on arch linux](https://medium.com/brasil-ai/instalando-tensorflow-1-6-0-gpu-cuda-9-1-cudnn-7-1-3-no-arch-linux-manjaro-e068b3a8025f) 
 
-I began by training a 1-layer fully connected network, using only data from the center camera,
-just to get the data pipeline working.  
-
-Next I implemented LeNet in Keras, to see how it would perform.  
+I implemented LeNet in Keras, to see how it would perform.  
 I trained LeNet using only data from the center camera. 
-It sometimes got the car around the first corner and onto the bridge.
 
-Next I implemented a cropping layer as the first layer in my network.  This removed the top 50
-and bottom 20 pixels from each input image before passing the image on to the convolution layers.
+Next I implemented a cropping layer as the first layer in my network. 
 The top 50 pixels tended to contain sky/trees/horizon, and the bottom 20 pixels contained the car's
 hood, all of which are irrelevant to steering and might confuse the model.
 
-I then decided to augment the training dataset by additionally using images from the left and right cameras,
+I then i trained the CNN using images from the left and right cameras,
 as well as a left-right flipped version of the center camera's image.
 This entire training+validation dataset was too large to store in my computer's RAM:
 8036 samples x 160x320x3 x 4 bytes per float x 4 images per sample (center,left,right,flipped) = about 20 GB.
@@ -166,17 +158,8 @@ For the record, the network also performs just fine without the dropout layer.
 
 #### 3. Creation of the Training Set & Training Process
 
-Unfortunately, I had trouble recording my own training data on my system (Ubuntu 16.04).  When I tried to select an output
-directory from within linux_sim.x86_64, the directory appeared red, and the executable did nothing:
 
-![Recording error][recordingerror]
-
-Choice of directory did not appear to matter.  
-The only thing I could think of was that it was a permissions issue.  I chmod 777ed my output
-directory, and even ran the simulator as root, but the problem persisted.
-
-
-I therefore decided to use the provided training data, which was read in from driving_log.csv.
+I decided to use the provided training data, which was read in from driving_log.csv.
 Each line of driving_log.csv corresponded to one sample.
 Each sample contained a relative path to center, left, and right camera images, as well as the current driving
 angle, throttle, brake, and speed data.
@@ -214,12 +197,7 @@ were at the point on the road occupied by the left or right camera.
 Say at a given point in time the car is driving with a certain steering angle to stay on the road.  If the car suddenly shifted
 so that the center camera was in the spot formerly occupied by the left camera, the driving angle would have to be adjusted 
 clockwise (a correction added) to stay on the road.  If the car shifted so that the center camera was in the spot
-formerly occupied by the right camera, the driving angle would have to be adjusted counterclockwise (a correction subtracted)
-to stay on the road.  Here's a diagram from the Udacity lesson.  You can see that a line from the left camera's position
-to the same destination is further clockwise, while a line from the right camera's position to the same destination is 
-further counterclockwise. 
-
-![angle corrections][cameraangles]
+formerly occupied by the right camera, the driving angle would have to be adjusted counterclockwise (a correction subtracted) to stay on the road.  
 
 Adding the left and right images to the training set paired with corrected angles 
 should help the car recover when the center-camera's image
@@ -231,9 +209,8 @@ The track is counterclockwise, so unaugmented training data contains more left t
 Flipping the center-camera image and pairing it with a corresponding flipped angle adds more right-turn data, 
 which should help the model generalize.
 
-Images were read in from files, and the flipped image added, using a Python generator.  The generator processed lines of the 
-file that stored image locations along with angle data (driving_log.csv) in batches of 32, and supplied 
-data to model.fit_generator() in batches of 128 (each line of driving_log.csv was used to provide 
+Images were read in from files, and the flipped image added, using a Python generator. 
+The generator processed lines of the file that stored image locations along with angle data (driving_log.csv) in batches of 32, and supplied data to model.fit_generator() in batches of 128 (each line of driving_log.csv was used to provide 
 a center-camera, left-camera, right-camera, and center-camera-flipped image). 
 
 The generator also shuffled the array containing the training samples prior to each epoch, so that 
